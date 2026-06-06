@@ -1,0 +1,2 @@
+This directory stores trip photos.
+Place your images here and reference them in trips.json as "assets/images/trip-name/photo.jpg"

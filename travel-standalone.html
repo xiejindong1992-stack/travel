@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel · Don</title>
+  <meta name="description" content="Don's personal travel log">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+/* Minimal reset */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  line-height: 1.5;
+  tab-size: 4;
+}
+body {
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+ul, ol {
+  list-style: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* =============================================
+   Personal Travel Site - 日式极简 Style
+   ============================================= */
+
+:root {
+  --bg: #fafafa;
+  --bg-alt: #f2f2f2;
+  --text: #1a1a1a;
+  --text-secondary: #999;
+  --text-muted: #bbb;
+  --border: #eee;
+  --accent: #c93;
+  --accent-hover: #a72;
+  --accent-light: rgba(204, 153, 51, 0.08);
+  --white: #fff;
+  --max-width: 960px;
+  --nav-height: 56px;
+  --radius: 4px;
+  --transition: 0.2s ease;
+}
+
+/* --- Base --- */
+html {
+  font-size: 16px;
+}
+body {
+  font-family: system-ui, -apple-system, "Noto Sans SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* --- Typography --- */
+h1, h2, h3, h4 {
+  line-height: 1.3;
+  font-weight: 400;
+}
+h1 { font-size: 1.75rem; font-weight: 300; letter-spacing: 0.02em; }
+h2 { font-size: 1.375rem; letter-spacing: 0.01em; }
+h3 { font-size: 1.125rem; }
+p { margin-bottom: 1em; }
+small { font-size: 0.875rem; color: var(--text-secondary); }
+
+/* --- Layout --- */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* --- Navigation --- */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  background: rgba(250, 250, 250, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+}
+.nav-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-brand {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+.nav-brand span {
+  color: var(--accent);
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.nav-links a {
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  color: var(--text-secondary);
+  transition: color var(--transition);
+  position: relative;
+  letter-spacing: 0.03em;
+}
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--text);
+}
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 14px;
+  right: 14px;
+  height: 1.5px;
+  background: var(--accent);
+}
+.nav-links .lang-toggle {
+  margin-left: 8px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+.nav-links .lang-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* --- Main Content --- */
+.main {
+  margin-top: var(--nav-height);
+  min-height: calc(100vh - var(--nav-height));
+}
+.page {
+  display: none;
+  padding: 60px 0 80px;
+}
+.page.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Empty State --- */
+.empty-state {
+  text-align: center;
+  padding: 80px 24px;
+  color: var(--text-muted);
+}
+.empty-state p {
+  font-size: 0.9rem;
+}
+
+/* --- Section Title --- */
+.section-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ============================================
+   TIMELINE VIEW
+   ============================================ */
+.timeline {
+  position: relative;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 12px;
+  width: 1px;
+  background: var(--border);
+}
+
+.year-group {
+  margin-bottom: 48px;
+}
+.year-group:last-child {
+  margin-bottom: 0;
+}
+.year-label {
+  font-size: 2rem;
+  font-weight: 200;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  padding-left: 40px;
+  position: relative;
+  line-height: 1;
+}
+.year-label::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  background: var(--accent);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.trip-entry {
+  position: relative;
+  padding: 16px 0 16px 40px;
+  cursor: pointer;
+  transition: background var(--transition);
+  border-radius: var(--radius);
+  margin-left: 0;
+}
+.trip-entry:hover {
+  background: var(--accent-light);
+}
+.trip-entry::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 24px;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  border-radius: 50%;
+  z-index: 1;
+  transition: all var(--transition);
+}
+.trip-entry:hover::before {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.trip-entry-date {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  margin-bottom: 2px;
+}
+.trip-entry-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.trip-entry-title {
+  font-size: 1rem;
+  font-weight: 450;
+}
+.trip-entry-dest {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.trip-entry-country {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.trip-entry-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.trip-entry-highlight {
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  background: var(--bg-alt);
+  border-radius: 10px;
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   FLIGHTS VIEW
+   ============================================ */
+.flights-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 48px;
+}
+.flights-stat {
+  background: var(--white);
+  padding: 24px 16px;
+  text-align: center;
+}
+.flights-stat-num {
+  font-size: 1.75rem;
+  font-weight: 200;
+  color: var(--text);
+  line-height: 1.2;
+}
+.flights-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+}
+
+.flights-year-group {
+  margin-bottom: 32px;
+}
+.flights-year-label {
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.flight-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition);
+}
+.flight-card:last-child {
+  border-bottom: none;
+}
+.flight-card:hover {
+  background: var(--accent-light);
+}
+.flight-route {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+  font-weight: 450;
+  font-size: 0.95rem;
+}
+.flight-arrow {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+.flight-info {
+  flex: 1;
+  min-width: 0;
+}
+.flight-meta {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+.flight-meta span + span::before {
+  content: '·';
+  margin: 0 6px;
+  color: var(--text-muted);
+}
+.flight-details {
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.flight-aircraft {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.flight-date {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.flights-grouped-table {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--white);
+}
+
+/* ============================================
+   PLANS VIEW
+   ============================================ */
+.plans-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.plans-column-header {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+.plans-column-header[data-status="dreaming"] { border-color: var(--text-muted); }
+.plans-column-header[data-status="planning"] { border-color: var(--accent); }
+.plans-column-header[data-status="booked"] { border-color: #2a8; }
+.plans-column-count {
+  font-weight: 300;
+  color: var(--text-secondary);
+  margin-left: 4px;
+}
+
+.plan-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 12px;
+  transition: all var(--transition);
+}
+.plan-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+.plan-card-title {
+  font-size: 1rem;
+  font-weight: 450;
+  margin-bottom: 4px;
+}
+.plan-card-dest {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.plan-card-date {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.plan-card-notes {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.plan-card-priority {
+  display: inline-block;
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: var(--accent-light);
+  color: var(--accent);
+  margin-top: 8px;
+}
+
+/* ============================================
+   MAP VIEW
+   ============================================ */
+.map-container {
+  height: calc(100vh - var(--nav-height) - 80px);
+  min-height: 400px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+#map {
+  width: 100%;
+  height: 100%;
+}
+/* Leaflet overrides */
+.leaflet-container {
+  font-family: inherit;
+  background: var(--bg);
+}
+.leaflet-control-zoom a {
+  color: var(--text) !important;
+}
+.trip-popup h3 {
+  font-size: 0.9rem;
+  font-weight: 450;
+  margin-bottom: 2px;
+}
+.trip-popup p {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+}
+.trip-popup a {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: var(--accent);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--transition);
+}
+.trip-popup a:hover {
+  border-bottom-color: var(--accent);
+}
+
+/* ============================================
+   TRIP DETAIL VIEW
+   ============================================ */
+.trip-detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  transition: color var(--transition);
+}
+.trip-detail-back:hover {
+  color: var(--accent);
+}
+.trip-detail-header {
+  margin-bottom: 32px;
+}
+.trip-detail-header h1 {
+  font-size: 2rem;
+  font-weight: 250;
+  margin-bottom: 8px;
+}
+.trip-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.trip-detail-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.trip-detail-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+.trip-detail-highlight {
+  font-size: 0.78rem;
+  padding: 4px 12px;
+  background: var(--bg-alt);
+  border-radius: 14px;
+  color: var(--text-secondary);
+}
+.trip-detail-description {
+  font-size: 0.95rem;
+  line-height: 1.9;
+  color: var(--text);
+  max-width: 680px;
+  margin-bottom: 40px;
+}
+.trip-detail-section-title {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.trip-detail-flights {
+  margin-bottom: 40px;
+}
+.trip-detail-flights .flight-card {
+  padding-left: 0;
+  padding-right: 0;
+}
+.trip-detail-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.trip-detail-gallery .placeholder-img {
+  aspect-ratio: 4/3;
+  background: var(--bg-alt);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .nav-links a {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+  .nav-links .lang-toggle {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+  }
+  .nav-brand {
+    font-size: 0.9rem;
+  }
+  .page {
+    padding: 40px 0 60px;
+  }
+
+  /* Timeline */
+  .year-label {
+    font-size: 1.5rem;
+    padding-left: 36px;
+  }
+  .year-label::before,
+  .timeline::before,
+  .trip-entry::before {
+    left: 6px;
+  }
+  .trip-entry {
+    padding-left: 36px;
+  }
+
+  /* Flights */
+  .flights-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .flight-card {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .flight-route {
+    min-width: auto;
+    width: 100%;
+  }
+  .flight-details {
+    text-align: left;
+    width: 100%;
+  }
+
+  /* Plans */
+  .plans-board {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  /* Trip Detail */
+  .trip-detail-header h1 {
+    font-size: 1.5rem;
+  }
+  .trip-detail-gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Map */
+  .map-container {
+    height: calc(100vh - var(--nav-height) - 120px);
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 16px;
+  }
+  .nav-inner {
+    padding: 0 16px;
+  }
+  .nav-links a {
+    padding: 6px 8px;
+    font-size: 0.7rem;
+  }
+  .flights-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .flights-stat {
+    padding: 16px 12px;
+  }
+  .flights-stat-num {
+    font-size: 1.375rem;
+  }
+  .trip-detail-gallery {
+    grid-template-columns: 1fr;
+  }
+}
+
+  </style>
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+/* === Inline data === */
+const __INLINE_TRIPS__ = {
+  "trips": [
+    {
+      "id": "kyoto-2023-spring",
+      "slug": "kyoto-2023-spring",
+      "title": "京都赏樱",
+      "titleEn": "Kyoto Cherry Blossoms",
+      "dateRange": { "start": "2023-03-25", "end": "2023-04-02" },
+      "destinations": ["京都", "大阪"],
+      "destinationsEn": ["Kyoto", "Osaka"],
+      "country": "日本",
+      "countryEn": "Japan",
+      "coordinates": { "lat": 35.0116, "lng": 135.7681 },
+      "cover": null,
+      "highlights": ["岚山竹林", "伏见稻荷大社", "清水寺夜樱"],
+      "highlightsEn": ["Bamboo Grove", "Fushimi Inari", "Kiyomizu-dera Night Illumination"],
+      "description": "第一次去日本看樱花。在京都每一条小巷里都能看到樱花，在岚山坐了小火车穿越竹林，在伏见稻荷走了千本鸟居。大阪的章鱼烧和串炸让人念念不忘。",
+      "descriptionEn": "First time seeing cherry blossoms in Japan. Every alley in Kyoto revealed sakura trees. Took the Sagano Romantic Train through the bamboo grove in Arashiyama, walked thousands of torii gates at Fushimi Inari. The takoyaki and kushikatsu in Osaka were unforgettable.",
+      "flights": ["CA927", "CA928"],
+      "tags": ["solo", "culture", "nature"],
+      "distance": 3478
+    },
+    {
+      "id": "bangkok-2023-summer",
+      "slug": "bangkok-2023-summer",
+      "title": "曼谷周末",
+      "titleEn": "Bangkok Weekend",
+      "dateRange": { "start": "2023-07-15", "end": "2023-07-17" },
+      "destinations": ["曼谷"],
+      "destinationsEn": ["Bangkok"],
+      "country": "泰国",
+      "countryEn": "Thailand",
+      "coordinates": { "lat": 13.7563, "lng": 100.5018 },
+      "cover": null,
+      "highlights": ["大皇宫", "考山路", "湄南河渡轮"],
+      "highlightsEn": ["Grand Palace", "Khao San Road", "Chao Phraya Ferry"],
+      "description": "说走就走的曼谷周末。赶在雨季里短暂的两天晴日，逛了大皇宫和卧佛寺，晚上在考山路吃路边摊。坐湄南河渡轮看两岸的寺庙和现代建筑交错。",
+      "descriptionEn": "A spontaneous weekend in Bangkok. Two sunny days in the rainy season, visited the Grand Palace and Wat Pho, ate street food on Khao San Road at night. Took the Chao Phraya ferry watching temples and modern buildings alternate along the riverbanks.",
+      "flights": ["TG615", "TG616"],
+      "tags": ["solo", "short-trip"],
+      "distance": 4652
+    },
+    {
+      "id": "singapore-2023-autumn",
+      "slug": "singapore-2023-autumn",
+      "title": "新加坡",
+      "titleEn": "Singapore",
+      "dateRange": { "start": "2023-10-08", "end": "2023-10-12" },
+      "destinations": ["新加坡"],
+      "destinationsEn": ["Singapore"],
+      "country": "新加坡",
+      "countryEn": "Singapore",
+      "coordinates": { "lat": 1.3521, "lng": 103.8198 },
+      "cover": null,
+      "highlights": ["滨海湾花园", "牛车水", "圣淘沙"],
+      "highlightsEn": ["Gardens by the Bay", "Chinatown", "Sentosa"],
+      "description": "新加坡四天，白天太热就泡在博物馆和商场里，傍晚出来逛。滨海湾花园的超级树灯光秀很震撼，牛车水的海南鸡饭名不虚传。",
+      "descriptionEn": "Four days in Singapore. Spent the hot afternoons in museums and malls, ventured out in the evenings. The Supertree light show at Gardens by the Bay was spectacular.",
+      "flights": ["SQ801", "SQ802"],
+      "tags": ["solo", "city"],
+      "distance": 4475
+    },
+    {
+      "id": "tokyo-2024-winter",
+      "slug": "tokyo-2024-winter",
+      "title": "东京滑雪",
+      "titleEn": "Tokyo Ski Trip",
+      "dateRange": { "start": "2024-02-20", "end": "2024-02-25" },
+      "destinations": ["东京", "白马村"],
+      "destinationsEn": ["Tokyo", "Hakuba"],
+      "country": "日本",
+      "countryEn": "Japan",
+      "coordinates": { "lat": 35.6762, "lng": 139.6503 },
+      "cover": null,
+      "highlights": ["白马滑雪", "新宿夜景", "筑地市场"],
+      "highlightsEn": ["Hakuba Skiing", "Shinjuku Night View", "Tsukiji Market"],
+      "description": "冬天又去了日本，这次主要去白马滑雪。白马的粉雪名不虚传，滑了三天不过瘾。回东京后在新宿高处看夜景，又去筑地市场补了一顿海鲜。",
+      "descriptionEn": "Back to Japan in winter, this time for skiing in Hakuba. The powder snow lived up to the hype, three days wasn't enough. Back in Tokyo, enjoyed the night view from Shinjuku and a seafood feast at Tsukiji Market.",
+      "flights": ["NH964", "NH963"],
+      "tags": ["solo", "ski", "nature"],
+      "distance": 3478
+    },
+    {
+      "id": "bali-2024-summer",
+      "slug": "bali-2024-summer",
+      "title": "巴厘岛",
+      "titleEn": "Bali",
+      "dateRange": { "start": "2024-06-12", "end": "2024-06-18" },
+      "destinations": ["巴厘岛", "乌布"],
+      "destinationsEn": ["Bali", "Ubud"],
+      "country": "印尼",
+      "countryEn": "Indonesia",
+      "coordinates": { "lat": -8.4095, "lng": 115.1889 },
+      "cover": null,
+      "highlights": ["乌布梯田", "海神庙日落", "库塔海滩"],
+      "highlightsEn": ["Ubud Rice Terraces", "Tanah Lot Sunset", "Kuta Beach"],
+      "description": "在巴厘岛待了一周，前三天在乌布看梯田、做瑜伽、喝椰子，后三天在库塔海滩冲浪。海神庙的日落是一天中最值得期待的时刻。",
+      "descriptionEn": "A week in Bali. First three days in Ubud: rice terraces, yoga, coconut water. Last three days at Kuta Beach surfing. Sunset at Tanah Lot was the daily highlight.",
+      "flights": ["GA881", "GA880"],
+      "tags": ["solo", "beach", "culture"],
+      "distance": 5211
+    },
+    {
+      "id": "seoul-2024-autumn",
+      "slug": "seoul-2024-autumn",
+      "title": "首尔深秋",
+      "titleEn": "Seoul in Autumn",
+      "dateRange": { "start": "2024-10-25", "end": "2024-10-28" },
+      "destinations": ["首尔"],
+      "destinationsEn": ["Seoul"],
+      "country": "韩国",
+      "countryEn": "South Korea",
+      "coordinates": { "lat": 37.5665, "lng": 126.9780 },
+      "cover": null,
+      "highlights": ["景福宫", "北村韩屋村", "炸鸡啤酒"],
+      "highlightsEn": ["Gyeongbokgung", "Bukchon Hanok Village", "Fried Chicken & Beer"],
+      "description": "首尔的秋天正好赶上红叶季，景福宫的古建和红叶相得益彰。在北村韩屋村的巷子里乱转，找到了几个很好的观景台。晚上当然少不了炸鸡啤酒。",
+      "descriptionEn": "Seoul in autumn, perfect timing for fall foliage. The red leaves against traditional architecture at Gyeongbokgung looked like a painting. Wandered the alleys of Bukchon Hanok Village. Finished every night with fried chicken and beer.",
+      "flights": ["KE868", "KE867"],
+      "tags": ["solo", "city", "culture"],
+      "distance": 1913
+    }
+  ]
+}
+;
+const __INLINE_FLIGHTS__ = {
+  "flights": [
+    {
+      "id": "CA927",
+      "flightNo": "CA927",
+      "airline": "中国国航",
+      "airlineEn": "Air China",
+      "airlineCode": "CA",
+      "date": "2023-03-25",
+      "departure": "PEK",
+      "departureCity": "北京",
+      "departureCityEn": "Beijing",
+      "arrival": "KIX",
+      "arrivalCity": "大阪",
+      "arrivalCityEn": "Osaka",
+      "depTime": "09:00",
+      "arrTime": "12:30",
+      "duration": "2h30m",
+      "aircraft": "A330-300",
+      "seat": "12A",
+      "cabin": "Y",
+      "distance": 1678,
+      "tripId": "kyoto-2023-spring",
+      "notes": "第一排靠窗"
+    },
+    {
+      "id": "CA928",
+      "flightNo": "CA928",
+      "airline": "中国国航",
+      "airlineEn": "Air China",
+      "airlineCode": "CA",
+      "date": "2023-04-02",
+      "departure": "KIX",
+      "departureCity": "大阪",
+      "departureCityEn": "Osaka",
+      "arrival": "PEK",
+      "arrivalCity": "北京",
+      "arrivalCityEn": "Beijing",
+      "depTime": "13:30",
+      "arrTime": "15:00",
+      "duration": "2h30m",
+      "aircraft": "A330-300",
+      "seat": "14K",
+      "cabin": "Y",
+      "distance": 1678,
+      "tripId": "kyoto-2023-spring",
+      "notes": "右侧富士山"
+    },
+    {
+      "id": "TG615",
+      "flightNo": "TG615",
+      "airline": "泰国国际航空",
+      "airlineEn": "Thai Airways",
+      "airlineCode": "TG",
+      "date": "2023-07-15",
+      "departure": "PEK",
+      "departureCity": "北京",
+      "departureCityEn": "Beijing",
+      "arrival": "BKK",
+      "arrivalCity": "曼谷",
+      "arrivalCityEn": "Bangkok",
+      "depTime": "17:25",
+      "arrTime": "21:35",
+      "duration": "5h10m",
+      "aircraft": "B787-9",
+      "seat": "16A",
+      "cabin": "Y",
+      "distance": 4615,
+      "tripId": "bangkok-2023-summer",
+      "notes": ""
+    },
+    {
+      "id": "TG616",
+      "flightNo": "TG616",
+      "airline": "泰国国际航空",
+      "airlineEn": "Thai Airways",
+      "airlineCode": "TG",
+      "date": "2023-07-17",
+      "departure": "BKK",
+      "departureCity": "曼谷",
+      "departureCityEn": "Bangkok",
+      "arrival": "PEK",
+      "arrivalCity": "北京",
+      "arrivalCityEn": "Beijing",
+      "depTime": "10:15",
+      "arrTime": "16:05",
+      "duration": "4h50m",
+      "aircraft": "B787-9",
+      "seat": "18K",
+      "cabin": "Y",
+      "distance": 4615,
+      "tripId": "bangkok-2023-summer",
+      "notes": ""
+    },
+    {
+      "id": "SQ801",
+      "flightNo": "SQ801",
+      "airline": "新加坡航空",
+      "airlineEn": "Singapore Airlines",
+      "airlineCode": "SQ",
+      "date": "2023-10-08",
+      "departure": "PEK",
+      "departureCity": "北京",
+      "departureCityEn": "Beijing",
+      "arrival": "SIN",
+      "arrivalCity": "新加坡",
+      "arrivalCityEn": "Singapore",
+      "depTime": "01:10",
+      "arrTime": "07:25",
+      "duration": "6h15m",
+      "aircraft": "A350-900",
+      "seat": "31A",
+      "cabin": "Y",
+      "distance": 4475,
+      "tripId": "singapore-2023-autumn",
+      "notes": "红眼航班，飞机很新"
+    },
+    {
+      "id": "SQ802",
+      "flightNo": "SQ802",
+      "airline": "新加坡航空",
+      "airlineEn": "Singapore Airlines",
+      "airlineCode": "SQ",
+      "date": "2023-10-12",
+      "departure": "SIN",
+      "departureCity": "新加坡",
+      "departureCityEn": "Singapore",
+      "arrival": "PEK",
+      "arrivalCity": "北京",
+      "arrivalCityEn": "Beijing",
+      "depTime": "22:45",
+      "arrTime": "05:00+1",
+      "duration": "6h15m",
+      "aircraft": "A350-900",
+      "seat": "33K",
+      "cabin": "Y",
+      "distance": 4475,
+      "tripId": "singapore-2023-autumn",
+      "notes": ""
+    },
+    {
+      "id": "NH964",
+      "flightNo": "NH964",
+      "airline": "全日空",
+      "airlineEn": "ANA",
+      "airlineCode": "NH",
+      "date": "2024-02-20",
+      "departure": "PEK",
+      "departureCity": "北京",
+      "departureCityEn": "Beijing",
+      "arrival": "NRT",
+      "arrivalCity": "东京",
+      "arrivalCityEn": "Tokyo",
+      "depTime": "08:30",
+      "arrTime": "12:45",
+      "duration": "3h15m",
+      "aircraft": "B787-10",
+      "seat": "22A",
+      "cabin": "Y",
+      "distance": 2097,
+      "tripId": "tokyo-2024-winter",
+      "notes": "ANA 餐食不错"
+    },
+    {
+      "id": "NH963",
+      "flightNo": "NH963",
+      "airline": "全日空",
+      "airlineEn": "ANA",
+      "airlineCode": "NH",
+      "date": "2024-02-25",
+      "departure": "NRT",
+      "departureCity": "东京",
+      "departureCityEn": "Tokyo",
+      "arrival": "PEK",
+      "arrivalCity": "北京",
+      "arrivalCityEn": "Beijing",
+      "depTime": "17:15",
+      "arrTime": "20:30",
+      "duration": "3h15m",
+      "aircraft": "B787-10",
+      "seat": "24K",
+      "cabin": "Y",
+      "distance": 2097,
+      "tripId": "tokyo-2024-winter",
+      "notes": "夕阳下的富士山"
+    },
+    {
+      "id": "GA881",
+      "flightNo": "GA881",
+      "airline": "印尼鹰航",
+      "airlineEn": "Garuda Indonesia",
+      "airlineCode": "GA",
+      "date": "2024-06-12",
+      "departure": "PEK",
+      "departureCity": "北京",
+      "departureCityEn": "Beijing",
+      "arrival": "DPS",
+      "arrivalCity": "巴厘岛",
+      "arrivalCityEn": "Bali",
+      "depTime": "02:05",
+      "arrTime": "08:45",
+      "duration": "6h40m",
+      "aircraft": "A330-300",
+      "seat": "19A",
+      "cabin": "Y",
+      "distance": 5211,
+      "tripId": "bali-2024-summer",
+      "notes": "红眼航班，Garuda 服务一流"
+    },
+    {
+      "id": "GA880",
+      "flightNo": "GA880",
+      "airline": "印尼鹰航",
+      "airlineEn": "Garuda Indonesia",
+      "airlineCode": "GA",
+      "date": "2024-06-18",
+      "departure": "DPS",
+      "departureCity": "巴厘岛",
+      "departureCityEn": "Bali",
+      "arrival": "PEK",
+      "arrivalCity": "北京",
+      "arrivalCityEn": "Beijing",
+      "depTime": "22:30",
+      "arrTime": "05:00+1",
+      "duration": "6h30m",
+      "aircraft": "A330-300",
+      "seat": "21K",
+      "cabin": "Y",
+      "distance": 5211,
+      "tripId": "bali-2024-summer",
+      "notes": ""
+    },
+    {
+      "id": "KE868",
+      "flightNo": "KE868",
+      "airline": "大韩航空",
+      "airlineEn": "Korean Air",
+      "airlineCode": "KE",
+      "date": "2024-10-25",
+      "departure": "PEK",
+      "departureCity": "北京",
+      "departureCityEn": "Beijing",
+      "arrival": "ICN",
+      "arrivalCity": "首尔",
+      "arrivalCityEn": "Seoul",
+      "depTime": "10:40",
+      "arrTime": "13:20",
+      "duration": "1h40m",
+      "aircraft": "B747-8",
+      "seat": "45A",
+      "cabin": "Y",
+      "distance": 963,
+      "tripId": "seoul-2024-autumn",
+      "notes": "747上层经济舱，稀有体验"
+    },
+    {
+      "id": "KE867",
+      "flightNo": "KE867",
+      "airline": "大韩航空",
+      "airlineEn": "Korean Air",
+      "airlineCode": "KE",
+      "date": "2024-10-28",
+      "departure": "ICN",
+      "departureCity": "首尔",
+      "departureCityEn": "Seoul",
+      "arrival": "PEK",
+      "arrivalCity": "北京",
+      "arrivalCityEn": "Beijing",
+      "depTime": "15:30",
+      "arrTime": "16:30",
+      "duration": "2h00m",
+      "aircraft": "B787-9",
+      "seat": "42K",
+      "cabin": "Y",
+      "distance": 963,
+      "tripId": "seoul-2024-autumn",
+      "notes": "韩亚/大韩合并前的最后一次？"
+    }
+  ]
+}
+;
+const __INLINE_PLANS__ = {
+  "plans": [
+    {
+      "id": "iceland-2025",
+      "title": "冰岛环岛自驾",
+      "titleEn": "Iceland Ring Road",
+      "status": "planning",
+      "dateRange": { "start": "", "end": "" },
+      "destinations": ["雷克雅未克", "维克", "阿克雷里"],
+      "destinationsEn": ["Reykjavik", "Vik", "Akureyri"],
+      "country": "冰岛",
+      "countryEn": "Iceland",
+      "cover": null,
+      "notes": "秋季极光几率高，需要租四驱SUV，环岛约7-10天。蓝湖温泉、冰河湖、黑沙滩都是必去。",
+      "notesEn": "High chance of northern lights in autumn. Need a 4WD SUV. Ring road takes about 7-10 days. Must-visits: Blue Lagoon, Jokulsarlon, Black Sand Beach.",
+      "priority": 1,
+      "budget": null
+    },
+    {
+      "id": "new-zealand-2026",
+      "title": "新西兰南岛",
+      "titleEn": "New Zealand South Island",
+      "status": "dreaming",
+      "dateRange": { "start": "", "end": "" },
+      "destinations": ["基督城", "皇后镇", "特卡波"],
+      "destinationsEn": ["Christchurch", "Queenstown", "Tekapo"],
+      "country": "新西兰",
+      "countryEn": "New Zealand",
+      "cover": null,
+      "notes": "南岛自驾是梦想之旅。特卡波的星空保护区、皇后镇的跳伞、米尔福德峡湾。建议至少两周。",
+      "notesEn": "South Island road trip dream. Tekapo dark sky reserve, Queenstown skydiving, Milford Sound. Recommend at least two weeks.",
+      "priority": 2,
+      "budget": null
+    },
+    {
+      "id": "bangkok-2025-spring",
+      "title": "曼谷再访",
+      "titleEn": "Bangkok Again",
+      "status": "booked",
+      "dateRange": { "start": "2025-04-10", "end": "2025-04-13" },
+      "destinations": ["曼谷"],
+      "destinationsEn": ["Bangkok"],
+      "country": "泰国",
+      "countryEn": "Thailand",
+      "cover": null,
+      "notes": "机票已出，TG615 同一航班。这次主要去吃东西和按摩，顺便看看郑王庙新修缮的部分。",
+      "notesEn": "Ticket booked, same flight TG615. Focus on food and massage this time, plus checking out the newly restored Wat Arun.",
+      "priority": 0,
+      "budget": null
+    },
+    {
+      "id": "hokkaido-2025-winter",
+      "title": "北海道滑雪",
+      "titleEn": "Hokkaido Skiing",
+      "status": "planning",
+      "dateRange": { "start": "2025-12-20", "end": "2025-12-28" },
+      "destinations": ["札幌", "二世古"],
+      "destinationsEn": ["Sapporo", "Niseko"],
+      "country": "日本",
+      "countryEn": "Japan",
+      "cover": null,
+      "notes": "二世古的粉雪比白马更好？想去验证一下。顺便去札幌吃螃蟹和味噌拉面。",
+      "notesEn": "They say Niseko powder is even better than Hakuba. Need to verify. Also visit Sapporo for crab and miso ramen.",
+      "priority": 1,
+      "budget": null
+    }
+  ]
+}
+;
+
+/* === Inline JS: data.js === */
+/**
+ * data.js — Data loader
+ * Fetches and caches all JSON data in a single parallel load.
+ */
+const DataStore = {
+  trips: null,
+  flights: null,
+  plans: null,
+  loaded: false,
+
+  async load() {
+    if (this.loaded) return;
+    try {
+      const [tripsRes, flightsRes, plansRes] = await Promise.all([
+        fetch('data/trips.json'),
+        fetch('data/flights.json'),
+        fetch('data/plans.json')
+      ]);
+      if (!tripsRes.ok || !flightsRes.ok || !plansRes.ok) {
+        throw new Error('Failed to load data files');
+      }
+      this.trips = (await tripsRes.json()).trips;
+      this.flights = (await flightsRes.json()).flights;
+      this.plans = (await plansRes.json()).plans;
+      this.loaded = true;
+    } catch (err) {
+      console.error('DataStore.load error:', err);
+      this.trips = [];
+      this.flights = [];
+      this.plans = [];
+      this.loaded = true;
+    }
+  },
+
+  getTrips() { return this.trips || []; },
+  getFlights() { return this.flights || []; },
+  getPlans() { return this.plans || []; },
+
+  getTripBySlug(slug) {
+    return (this.trips || []).find(t => t.slug === slug) || null;
+  },
+
+  getFlightsByTrip(tripId) {
+    return (this.flights || []).filter(f => f.tripId === tripId);
+  },
+
+  getTripsByYear() {
+    const groups = {};
+    for (const trip of (this.trips || [])) {
+      const year = trip.dateRange.start.slice(0, 4);
+      if (!groups[year]) groups[year] = [];
+      groups[year].push(trip);
+    }
+    // Sort years descending
+    const sorted = {};
+    Object.keys(groups).sort((a, b) => b - a).forEach(y => { sorted[y] = groups[y]; });
+    return sorted;
+  },
+
+  getFlightsByYear() {
+    const groups = {};
+    for (const flight of (this.flights || [])) {
+      const year = flight.date.slice(0, 4);
+      if (!groups[year]) groups[year] = [];
+      groups[year].push(flight);
+    }
+    const sorted = {};
+    Object.keys(groups).sort((a, b) => b - a).forEach(y => { sorted[y] = groups[y]; });
+    return sorted;
+  },
+
+  getFlightStats() {
+    const flights = this.flights || [];
+    const airlines = new Set(flights.map(f => f.airline));
+    const airports = new Set();
+    flights.forEach(f => { airports.add(f.departure); airports.add(f.arrival); });
+    const totalDist = flights.reduce((sum, f) => sum + (f.distance || 0), 0);
+    return {
+      total: flights.length,
+      airlines: airlines.size,
+      airports: airports.size,
+      distance: totalDist
+    };
+  },
+
+  getPlansByStatus() {
+    const groups = { dreaming: [], planning: [], booked: [] };
+    for (const p of (this.plans || [])) {
+      if (groups[p.status]) groups[p.status].push(p);
+    }
+    // Sort by priority within each group
+    for (const key of Object.keys(groups)) {
+      groups[key].sort((a, b) => (a.priority || 99) - (b.priority || 99));
+    }
+    return groups;
+  }
+};
+
+
+/* Override DataStore.load to use inline data */
+DataStore.load = async function() {
+  this.trips = __INLINE_TRIPS__.trips;
+  this.flights = __INLINE_FLIGHTS__.flights;
+  this.plans = __INLINE_PLANS__.plans;
+  this.loaded = true;
+};
+
+/* === Inline JS: views === */
+/**
+ * timeline.js — Timeline view
+ * Vertical timeline of past trips grouped by year.
+ */
+function renderTimeline() {
+  const page = document.getElementById('page-timeline');
+  if (!page) return;
+  page.classList.add('active');
+
+  const lang = App.getLang();
+  const tripsByYear = DataStore.getTripsByYear();
+  const years = Object.keys(tripsByYear);
+  let html = '';
+
+  const tl = (zh, en) => (lang === 'en' && en ? en : zh);
+
+  if (years.length === 0) {
+    html = `<div class="empty-state"><p>${lang === 'en' ? 'No trips yet.' : '还没有旅行记录。'}</p></div>`;
+  } else {
+    for (const year of years) {
+      const trips = tripsByYear[year];
+      html += `<div class="year-group">`;
+      html += `<div class="year-label">${year}</div>`;
+      for (const trip of trips) {
+        const start = trip.dateRange.start;
+        const end = trip.dateRange.end;
+        const dateStr = `${start.slice(5)}–${end.slice(5)}`;
+        const dest = tl(trip.destinations.join(' · '), trip.destinationsEn.join(' · '));
+        const country = tl(trip.country, trip.countryEn);
+        const title = tl(trip.title, trip.titleEn);
+        const highlights = tl(trip.highlights, trip.highlightsEn);
+        // Verify highlights is array
+        const hlArr = Array.isArray(highlights) ? highlights : trip.highlights || [];
+
+        html += `<div class="trip-entry" onclick="App.navigate('trip/${trip.slug}')">`;
+        html += `<div class="trip-entry-date">${dateStr}</div>`;
+        html += `<div class="trip-entry-header">`;
+        html += `<span class="trip-entry-title">${title}</span>`;
+        html += `<span class="trip-entry-dest">${dest}</span>`;
+        html += `<span class="trip-entry-country">${country}</span>`;
+        html += `</div>`;
+        if (hlArr.length > 0) {
+          html += `<div class="trip-entry-highlights">`;
+          for (const h of hlArr) {
+            html += `<span class="trip-entry-highlight">${h}</span>`;
+          }
+          html += `</div>`;
+        }
+        html += `</div>`;
+      }
+      html += `</div>`;
+    }
+  }
+
+  page.innerHTML = `<div class="container"><div class="timeline">${html}</div></div>`;
+}
+
+/**
+ * flights.js — Flight log view
+ * Stats dashboard + flights grouped by year.
+ */
+function renderFlights() {
+  const page = document.getElementById('page-flights');
+  if (!page) return;
+  page.classList.add('active');
+
+  const lang = App.getLang();
+  const flightsByYear = DataStore.getFlightsByYear();
+  const stats = DataStore.getFlightStats();
+  const years = Object.keys(flightsByYear);
+
+  const tl = (zh, en) => (lang === 'en' && en ? en : zh);
+
+  let html = '<div class="container">';
+
+  // Stats
+  html += `<div class="flights-stats">
+    <div class="flights-stat">
+      <div class="flights-stat-num">${stats.total}</div>
+      <div class="flights-stat-label">${tl('航班总数', 'Flights')}</div>
+    </div>
+    <div class="flights-stat">
+      <div class="flights-stat-num">${stats.airlines}</div>
+      <div class="flights-stat-label">${tl('航空公司', 'Airlines')}</div>
+    </div>
+    <div class="flights-stat">
+      <div class="flights-stat-num">${stats.airports}</div>
+      <div class="flights-stat-label">${tl('到访机场', 'Airports')}</div>
+    </div>
+    <div class="flights-stat">
+      <div class="flights-stat-num">${stats.distance.toLocaleString()}</div>
+      <div class="flights-stat-label">${tl('飞行距离(km)', 'Total km')}</div>
+    </div>
+  </div>`;
+
+  if (years.length === 0) {
+    html += `<div class="empty-state"><p>${tl('还没有飞行记录。', 'No flights yet.')}</p></div>`;
+  } else {
+    for (const year of years) {
+      const flights = flightsByYear[year];
+      html += `<div class="flights-year-group">`;
+      html += `<div class="flights-year-label">${year} <small>${flights.length} ${tl('次航班', 'flights')}</small></div>`;
+      html += `<div class="flights-grouped-table">`;
+      for (const f of flights) {
+        const airline = tl(f.airline, f.airlineEn);
+        const depCity = tl(f.departureCity, f.departureCityEn);
+        const arrCity = tl(f.arrivalCity, f.arrivalCityEn);
+        html += `<div class="flight-card">`;
+        html += `<div class="flight-route"><span>${f.departure}</span><span class="flight-arrow">→</span><span>${f.arrival}</span></div>`;
+        html += `<div class="flight-info">`;
+        html += `<div class="flight-meta"><span>${f.flightNo}</span><span>${airline}</span><span>${f.aircraft}</span></div>`;
+        html += `<div class="flight-date">${f.date} · ${f.depTime}–${f.arrTime}</div>`;
+        html += `</div>`;
+        html += `<div class="flight-details">`;
+        html += `<div>${f.duration}</div>`;
+        html += `<div class="flight-aircraft">${tl('座位', 'Seat')} ${f.seat}</div>`;
+        html += `</div>`;
+        html += `</div>`;
+      }
+      html += `</div></div>`;
+    }
+  }
+
+  html += '</div>';
+  page.innerHTML = html;
+}
+
+/**
+ * plans.js — Future plans view
+ * Three-column kanban: Dreaming / Planning / Booked
+ */
+function renderPlans() {
+  const page = document.getElementById('page-plans');
+  if (!page) return;
+  page.classList.add('active');
+
+  const lang = App.getLang();
+  const plansByStatus = DataStore.getPlansByStatus();
+  const statuses = ['dreaming', 'planning', 'booked'];
+
+  const tl = (zh, en) => (lang === 'en' && en ? en : zh);
+
+  const statusLabels = {
+    dreaming: tl('梦想', 'Dreaming'),
+    planning: tl('规划中', 'Planning'),
+    booked: tl('已预订', 'Booked')
+  };
+
+  let html = '<div class="container">';
+  html += `<div class="section-title">${tl('未来计划', 'Future Plans')}</div>`;
+  html += '<div class="plans-board">';
+
+  for (const status of statuses) {
+    const plans = plansByStatus[status] || [];
+    html += `<div class="plans-column">`;
+    html += `<div class="plans-column-header" data-status="${status}">${statusLabels[status]} <span class="plans-column-count">${plans.length}</span></div>`;
+
+    if (plans.length === 0) {
+      html += `<div style="font-size:0.8rem;color:var(--text-muted);padding:16px 0;">${tl('暂无', 'None')}</div>`;
+    } else {
+      for (const p of plans) {
+        const title = tl(p.title, p.titleEn);
+        const dest = tl(p.destinations.join(' · '), p.destinationsEn.join(' · '));
+        const notes = tl(p.notes, p.notesEn);
+        const hasDate = p.dateRange && (p.dateRange.start || p.dateRange.end);
+
+        html += `<div class="plan-card">`;
+        html += `<div class="plan-card-title">${title}</div>`;
+        html += `<div class="plan-card-dest">${dest}</div>`;
+        if (hasDate) {
+          const dr = p.dateRange;
+          const dateStr = dr.start ? `${dr.start}${dr.end ? ` – ${dr.end}` : ''}` : dr.end || '';
+          html += `<div class="plan-card-date">${dateStr}</div>`;
+        }
+        if (notes) {
+          html += `<div class="plan-card-notes">${notes}</div>`;
+        }
+        html += `</div>`;
+      }
+    }
+
+    html += `</div>`;
+  }
+
+  html += '</div></div>';
+  page.innerHTML = html;
+}
+
+/**
+ * map.js — Interactive map view
+ * Leaflet map with markers and polylines connecting destinations.
+ */
+let mapInstance = null;
+let markersLayer = null;
+let polylineLayer = null;
+
+function renderMap() {
+  const page = document.getElementById('page-map');
+  if (!page) return;
+  page.classList.add('active');
+
+  const lang = App.getLang();
+  const tl = (zh, en) => (lang === 'en' && en ? en : zh);
+
+  page.innerHTML = `<div class="container"><div class="map-container" id="map-container"><div id="map"></div></div></div>`;
+
+  // Wait for DOM update then init map
+  setTimeout(() => initMap(tl), 100);
+}
+
+function initMap(tl) {
+  const mapEl = document.getElementById('map');
+  if (!mapEl) return;
+
+  // Destroy previous instance
+  if (mapInstance) {
+    mapInstance.remove();
+    mapInstance = null;
+  }
+
+  mapInstance = L.map('map', {
+    center: [20, 100],
+    zoom: 3,
+    zoomControl: true,
+    attributionControl: false
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18
+  }).addTo(mapInstance);
+
+  markersLayer = L.layerGroup().addTo(mapInstance);
+  polylineLayer = L.layerGroup().addTo(mapInstance);
+
+  const trips = DataStore.getTrips();
+  if (trips.length === 0) {
+    // Show a gentle message overlay
+    return;
+  }
+
+  // Build points array in chronological order
+  const sorted = [...trips].sort((a, b) => a.dateRange.start.localeCompare(b.dateRange.start));
+  const points = [];
+  const visited = {};
+
+  for (const trip of sorted) {
+    const { lat, lng } = trip.coordinates;
+    if (!lat || !lng) continue;
+
+    const destKey = `${trip.country}-${trip.destinations[0]}`;
+    visited[destKey] = (visited[destKey] || 0) + 1;
+    const count = visited[destKey];
+
+    const title = tl(trip.title, trip.titleEn);
+    const dest = tl(trip.destinations.join(', '), trip.destinationsEn.join(', '));
+    const dateStr = `${trip.dateRange.start} – ${trip.dateRange.end}`;
+
+    const marker = L.circleMarker([lat, lng], {
+      radius: count > 1 ? 10 : 7,
+      color: '#c93',
+      fillColor: '#c93',
+      fillOpacity: 0.6,
+      weight: 1.5
+    });
+
+    const popupContent = `<div class="trip-popup">
+      <h3>${title}</h3>
+      <p>${dest}</p>
+      <p>${dateStr}</p>
+      <a href="#trip/${trip.slug}">${tl('查看详情 →', 'View details →')}</a>
+    </div>`;
+
+    marker.bindPopup(popupContent);
+    markersLayer.addLayer(marker);
+    points.push([lat, lng]);
+  }
+
+  // Draw polylines connecting destinations in order
+  if (points.length > 1) {
+    const polyline = L.polyline(points, {
+      color: '#c93',
+      weight: 1.5,
+      opacity: 0.4,
+      dashArray: '6, 6'
+    });
+    polylineLayer.addLayer(polyline);
+
+    // Fit bounds to show all markers
+    mapInstance.fitBounds(polyline.getBounds().pad(0.2));
+  } else if (points.length === 1) {
+    mapInstance.setView(points[0], 6);
+  }
+}
+
+/**
+ * trip-detail.js — Single trip detail view
+ * Shows full trip info, associated flights, placeholder gallery.
+ */
+function renderTripDetail(slug) {
+  const page = document.getElementById('page-trip-detail');
+  if (!page) return;
+  page.classList.add('active');
+
+  const lang = App.getLang();
+  const tl = (zh, en) => (lang === 'en' && en ? en : zh);
+
+  const trip = DataStore.getTripBySlug(slug);
+  if (!trip) {
+    page.innerHTML = `<div class="container"><div class="empty-state"><p>${tl('没有找到该旅行记录。', 'Trip not found.')}</p>
+      <p><a href="#timeline" style="color:var(--accent);border-bottom:1px solid transparent;" 
+      onmouseover="this.style.borderBottomColor='var(--accent)'" 
+      onmouseout="this.style.borderBottomColor='transparent'"
+      onclick="App.navigate('timeline')">${tl('返回时间线', 'Back to timeline')}</a></p></div></div>`;
+    return;
+  }
+
+  const title = tl(trip.title, trip.titleEn);
+  const dest = tl(trip.destinations.join(' · '), trip.destinationsEn.join(' · '));
+  const country = tl(trip.country, trip.countryEn);
+  const description = tl(trip.description, trip.descriptionEn);
+  const highlights = tl(trip.highlights, trip.highlightsEn);
+  const hlArr = Array.isArray(highlights) ? highlights : trip.highlights || [];
+  const tags = trip.tags || [];
+  const flights = DataStore.getFlightsByTrip(trip.id);
+
+  let html = '<div class="container">';
+
+  // Back button
+  html += `<a href="#timeline" class="trip-detail-back" onclick="App.navigate('timeline');return false;">
+    ← ${tl('返回时间线', 'Back')}
+  </a>`;
+
+  // Header
+  html += `<div class="trip-detail-header">
+    <h1>${title}</h1>
+    <div class="trip-detail-meta">
+      <span>${trip.dateRange.start} – ${trip.dateRange.end}</span>
+      <span>${dest}</span>
+      <span>${country}</span>
+      ${trip.distance ? `<span>${trip.distance.toLocaleString()} km</span>` : ''}
+    </div>
+  </div>`;
+
+  // Highlights
+  if (hlArr.length > 0) {
+    html += `<div class="trip-detail-highlights">`;
+    for (const h of hlArr) {
+      html += `<span class="trip-detail-highlight">${h}</span>`;
+    }
+    html += `</div>`;
+  }
+
+  // Description
+  html += `<div class="trip-detail-description">${description}</div>`;
+
+  // Flights
+  if (flights.length > 0) {
+    html += `<div class="trip-detail-section-title">${tl('航班', 'Flights')}</div>`;
+    html += `<div class="trip-detail-flights"><div class="flights-grouped-table">`;
+    for (const f of flights) {
+      const airline = tl(f.airline, f.airlineEn);
+      html += `<div class="flight-card">
+        <div class="flight-route"><span>${f.departure}</span><span class="flight-arrow">→</span><span>${f.arrival}</span></div>
+        <div class="flight-info">
+          <div class="flight-meta"><span>${f.flightNo}</span><span>${airline}</span><span>${f.aircraft}</span></div>
+          <div class="flight-date">${f.date} · ${f.depTime}–${f.arrTime}</div>
+        </div>
+        <div class="flight-details">
+          <div>${f.duration}</div>
+          <div class="flight-aircraft">${tl('座位', 'Seat')} ${f.seat}</div>
+        </div>
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  // Gallery placeholders
+  html += `<div class="trip-detail-section-title">${tl('照片', 'Photos')}</div>`;
+  html += `<div class="trip-detail-gallery">`;
+  for (let i = 0; i < 6; i++) {
+    html += `<div class="placeholder-img">${tl('照片 ' + (i + 1), 'Photo ' + (i + 1))}</div>`;
+  }
+  html += `</div>`;
+
+  html += '</div>';
+  page.innerHTML = html;
+}
+
+
+/* === Inline JS: app.js === */
+/**
+ * app.js — Application entry point
+ * Hash router, navigation, language toggle.
+ */
+
+(function () {
+  'use strict';
+
+  let currentLang = 'zh';
+  let currentRoute = '';
+  let currentParams = {};
+
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => document.querySelectorAll(sel);
+
+  function init() {
+    // Restore language preference
+    const saved = localStorage.getItem('travel-lang');
+    if (saved === 'en' || saved === 'zh') currentLang = saved;
+    updateLangUI();
+
+    // Nav event listeners
+    $$('.nav-links a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        // Lang toggle is handled separately
+        if (a.classList.contains('lang-toggle')) return;
+      });
+    });
+
+    // Lang toggle
+    $('.lang-toggle').addEventListener('click', (e) => {
+      e.preventDefault();
+      currentLang = currentLang === 'zh' ? 'en' : 'zh';
+      localStorage.setItem('travel-lang', currentLang);
+      updateLangUI();
+      renderCurrentView();
+    });
+
+    // Hash change
+    window.addEventListener('hashchange', () => {
+      renderCurrentView();
+    });
+
+    // Initial load & render
+    DataStore.load().then(() => {
+      renderCurrentView();
+    });
+  }
+
+  function updateLangUI() {
+    const toggle = $('.lang-toggle');
+    if (toggle) toggle.textContent = currentLang === 'zh' ? 'EN' : '中文';
+    document.documentElement.lang = currentLang;
+  }
+
+  function parseRoute() {
+    const hash = window.location.hash.slice(1) || 'timeline';
+    const parts = hash.split('/');
+    const route = parts[0];
+    const params = {};
+    if (parts[1]) params.slug = parts[1];
+    return { route, params };
+  }
+
+  function navigate(hash) {
+    window.location.hash = hash;
+  }
+
+  function renderCurrentView() {
+    const { route, params } = parseRoute();
+    currentRoute = route;
+    currentParams = params;
+
+    // Hide all pages
+    $$('.page').forEach(p => p.classList.remove('active'));
+
+    // Update nav active state
+    $$('.nav-links a[href^="#"]').forEach(a => {
+      if (a.classList.contains('lang-toggle')) return;
+      const href = a.getAttribute('href').slice(1);
+      const isActive = route === 'timeline' && href === '' ? true :
+                       route === href ? true : false;
+      a.classList.toggle('active', isActive);
+    });
+
+    // Render the appropriate view
+    switch (route) {
+      case 'timeline':
+      case '':
+        renderTimeline();
+        break;
+      case 'flights':
+        renderFlights();
+        break;
+      case 'plans':
+        renderPlans();
+        break;
+      case 'map':
+        renderMap();
+        break;
+      case 'trip':
+        renderTripDetail(params.slug);
+        break;
+      default:
+        navigate('timeline');
+        break;
+    }
+  }
+
+  // Public API for view modules
+  window.App = {
+    getLang: () => currentLang,
+    navigate,
+    renderCurrentView,
+    $,
+    $$,
+    tl: function (zh, en) {
+      return currentLang === 'en' && en ? en : zh;
+    }
+  };
+
+  // Start when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+
+  </script>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#timeline" class="nav-brand"><span>✈</span> Don · Travel</a>
+      <div class="nav-links">
+        <a href="#timeline">Timeline</a>
+        <a href="#flights">Flights</a>
+        <a href="#plans">Plans</a>
+        <a href="#map">Map</a>
+        <button class="lang-toggle" aria-label="Toggle language">EN</button>
+      </div>
+    </div>
+  </nav>
+  <main class="main">
+    <div id="page-timeline" class="page"><div class="container"><div class="empty-state"><p>Loading...</p></div></div></div>
+    <div id="page-flights" class="page"><div class="container"><div class="empty-state"><p>Loading...</p></div></div></div>
+    <div id="page-plans" class="page"><div class="container"><div class="empty-state"><p>Loading...</p></div></div></div>
+    <div id="page-map" class="page"><div class="container"><div class="empty-state"><p>Loading...</p></div></div></div>
+    <div id="page-trip-detail" class="page"><div class="container"><div class="empty-state"><p>Loading...</p></div></div></div>
+  </main>
+</body>
+</html>

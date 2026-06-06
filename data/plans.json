@@ -1,0 +1,133 @@
+{
+  "plans": [
+    {
+      "id": "iceland-2025",
+      "title": "冰岛环岛自驾",
+      "titleEn": "Iceland Ring Road",
+      "status": "planning",
+      "dateRange": {
+        "start": "",
+        "end": ""
+      },
+      "destinations": [
+        "雷克雅未克",
+        "维克",
+        "阿克雷里"
+      ],
+      "destinationsEn": [
+        "Reykjavik",
+        "Vik",
+        "Akureyri"
+      ],
+      "country": "冰岛",
+      "countryEn": "Iceland",
+      "cover": null,
+      "notes": "秋季极光几率高，需要租四驱SUV，环岛约7-10天。蓝湖温泉、冰河湖、黑沙滩都是必去。",
+      "notesEn": "High chance of northern lights in autumn. Need a 4WD SUV. Ring road takes about 7-10 days. Must-visits: Blue Lagoon, Jokulsarlon, Black Sand Beach.",
+      "priority": 1,
+      "budget": null
+    },
+    {
+      "id": "new-zealand-2026",
+      "title": "新西兰南岛",
+      "titleEn": "New Zealand South Island",
+      "status": "dreaming",
+      "dateRange": {
+        "start": "",
+        "end": ""
+      },
+      "destinations": [
+        "基督城",
+        "皇后镇",
+        "特卡波"
+      ],
+      "destinationsEn": [
+        "Christchurch",
+        "Queenstown",
+        "Tekapo"
+      ],
+      "country": "新西兰",
+      "countryEn": "New Zealand",
+      "cover": null,
+      "notes": "南岛自驾是梦想之旅。特卡波的星空保护区、皇后镇的跳伞、米尔福德峡湾。建议至少两周。",
+      "notesEn": "South Island road trip dream. Tekapo dark sky reserve, Queenstown skydiving, Milford Sound. Recommend at least two weeks.",
+      "priority": 2,
+      "budget": null
+    },
+    {
+      "id": "bangkok-2025-spring",
+      "title": "曼谷再访",
+      "titleEn": "Bangkok Again",
+      "status": "booked",
+      "dateRange": {
+        "start": "2025-04-10",
+        "end": "2025-04-13"
+      },
+      "destinations": [
+        "曼谷"
+      ],
+      "destinationsEn": [
+        "Bangkok"
+      ],
+      "country": "泰国",
+      "countryEn": "Thailand",
+      "cover": null,
+      "notes": "机票已出，TG615 同一航班。这次主要去吃东西和按摩，顺便看看郑王庙新修缮的部分。",
+      "notesEn": "Ticket booked, same flight TG615. Focus on food and massage this time, plus checking out the newly restored Wat Arun.",
+      "priority": 0,
+      "budget": null
+    },
+    {
+      "id": "hokkaido-2025-winter",
+      "title": "北海道滑雪",
+      "titleEn": "Hokkaido Skiing",
+      "status": "planning",
+      "dateRange": {
+        "start": "2025-12-20",
+        "end": "2025-12-28"
+      },
+      "destinations": [
+        "札幌",
+        "二世古"
+      ],
+      "destinationsEn": [
+        "Sapporo",
+        "Niseko"
+      ],
+      "country": "日本",
+      "countryEn": "Japan",
+      "cover": null,
+      "notes": "二世古的粉雪比白马更好？想去验证一下。顺便去札幌吃螃蟹和味噌拉面。",
+      "notesEn": "They say Niseko powder is even better than Hakuba. Need to verify. Also visit Sapporo for crab and miso ramen.",
+      "priority": 1,
+      "budget": null
+    },
+    {
+      "id": "krabi-2026-summer",
+      "title": "泰国甲米",
+      "titleEn": "Krabi Thailand",
+      "status": "booked",
+      "dateRange": {
+        "start": "2026-07-02",
+        "end": "2026-07-05"
+      },
+      "destinations": [
+        "广州",
+        "曼谷",
+        "甲米"
+      ],
+      "destinationsEn": [
+        "Guangzhou",
+        "Bangkok",
+        "Krabi"
+      ],
+      "country": "泰国",
+      "countryEn": "Thailand",
+      "cover": null,
+      "notes": "广州-曼谷-甲米，亚洲航空。甲米海滩和四岛游。",
+      "notesEn": "Guangzhou-Bangkok-Krabi with AirAsia. Krabi beaches and Four Islands tour.",
+      "priority": 0,
+      "budget": null
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Don · Travel</title>
+  <meta name="description" content="Don's travel log — past trips, flight records, and future plans.">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/reset.css?v=1">
+  <link rel="stylesheet" href="css/style.css?v=1">
+
+  <!-- Leaflet JS -->
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- App JS -->
+  <script defer src="js/data.js?v=1"></script>
+  <script defer src="js/home.js?v=1"></script>
+  <script defer src="js/timeline.js?v=1"></script>
+  <script defer src="js/flights.js?v=1"></script>
+  <script defer src="js/plans.js?v=1"></script>
+  <script defer src="js/map.js?v=1"></script>
+  <script defer src="js/trip-detail.js?v=1"></script>
+  <script defer src="js/app.js?v=1"></script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#home" class="nav-brand"><span>✈</span> Don · Travel</a>
+      <div class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#timeline">Timeline</a>
+        <a href="#flights">Flights</a>
+        <a href="#plans">Plans</a>
+        <a href="#map">Map</a>
+        <button class="lang-toggle" aria-label="Toggle language">EN</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main class="main">
+
+    <!-- Home page -->
+    <div id="page-home" class="page">
+      <div class="container"><div class="empty-state"><p>Loading...</p></div></div>
+    </div>
+
+    <!-- Timeline page -->
+    <div id="page-timeline" class="page">
+      <div class="container"><div class="empty-state"><p>Loading...</p></div></div>
+    </div>
+
+    <!-- Flights page -->
+    <div id="page-flights" class="page">
+      <div class="container"><div class="empty-state"><p>Loading...</p></div></div>
+    </div>
+
+    <!-- Plans page -->
+    <div id="page-plans" class="page">
+      <div class="container"><div class="empty-state"><p>Loading...</p></div></div>
+    </div>
+
+    <!-- Map page -->
+    <div id="page-map" class="page">
+      <div class="container"><div class="empty-state"><p>Loading...</p></div></div>
+    </div>
+
+    <!-- Trip detail page -->
+    <div id="page-trip-detail" class="page">
+      <div class="container"><div class="empty-state"><p>Loading...</p></div></div>
+    </div>
+
+  </main>
+
+</body>
+</html>
