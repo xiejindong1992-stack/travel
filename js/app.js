@@ -46,7 +46,7 @@
     const parts = hash.split('/');
     const route = parts[0];
     const params = {};
-    if (parts[1]) params.slug = parts[1];
+    if (parts[1]) params.slug = decodeURIComponent(parts[1]);
     return { route, params };
   }
 
