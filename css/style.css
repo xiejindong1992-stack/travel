@@ -1098,7 +1098,7 @@ small { font-size: 0.875rem; color: var(--text-secondary); }
 }
 /* --- Hero with default gradient --- */
 .hero-bg {
-  background: linear-gradient(135deg, #2d4a4a 0%, #4a6b3f 30%, #8b7355 60%, #a8936a 100%) !important;
+  background-image: linear-gradient(135deg, #2d4a4a, #4a6b3f, #8b7355, #a8936a);
   opacity: 0.85;
 }
 .hero-bg-overlay {

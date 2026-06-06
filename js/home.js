@@ -44,76 +44,72 @@ function renderHome() {
   };
   const em = (c) => EMOJI[c] || '✈️';
 
+  const HERO_IMAGE = 'assets/images/2026-05-04-tokyo/fuji.JPG';
+
   let html = '';
 
   // Hero
   html += '<div class="hero">';
-  html += '  <div class="hero-bg"></div>';
-  html += '  <div class="hero-bg-overlay"></div>';
-  html += '  <div class="hero-content">';
-  html += '    <span class="hero-icon">✈️</span>';
-  html += '    <h1><span>Don</span> · Travel</h1>';
-  html += '    <p class="tagline">' + tl('十年 · 七国 · 二十七万公里', '10 years · 7 countries · 270,000 km') + '</p>';
-  html += '    <p class="subtitle">' + tl('把每一次出发都记下来', 'Every journey tells a story') + '</p>';
-  html += '  </div>';
-  html += '  <div class="hero-scroll">' + tl('往下看', 'Scroll') + '</div>';
+  html += '<div class="hero-bg" style="background-image:url(' + HERO_IMAGE + ')"></div>';
+  html += '<div class="hero-bg-overlay"></div>';
+  html += '<div class="hero-content">';
+  html += '<span class="hero-icon">✈️</span>';
+  html += '<h1><span>Don</span> · Travel</h1>';
+  html += '<p class="tagline">' + tl('十年 · 七国 · 二十七万公里', '10 years · 7 countries · 270,000 km') + '</p>';
+  html += '<p class="subtitle">' + tl('把每一次出发都记下来', 'Every journey tells a story') + '</p>';
+  html += '</div>';
+  html += '<div class="hero-scroll">' + tl('往下看', 'Scroll') + '</div>';
   html += '</div>';
 
   // Stats
   html += '<div class="container">';
   html += '<div class="home-stats">';
-  html += '  <div class="home-stat"><div class="home-stat-num">' + flights.length + '</div><div class="home-stat-label">' + tl('航班', 'Flights') + '</div></div>';
-  html += '  <div class="home-stat"><div class="home-stat-num">' + countries.size + '</div><div class="home-stat-label">' + tl('国家和地区', 'Countries') + '</div></div>';
-  html += '  <div class="home-stat"><div class="home-stat-num">' + (stats.distance / 1000).toFixed(0) + 'k</div><div class="home-stat-label">' + tl('公里', 'Kilometers') + '</div></div>';
-  html += '  <div class="home-stat"><div class="home-stat-num">' + years.size + '</div><div class="home-stat-label">' + tl('飞行年', 'Years') + '</div></div>';
+  html += '<div class="home-stat"><div class="home-stat-num">' + flights.length + '</div><div class="home-stat-label">' + tl('航班', 'Flights') + '</div></div>';
+  html += '<div class="home-stat"><div class="home-stat-num">' + countries.size + '</div><div class="home-stat-label">' + tl('国家和地区', 'Countries') + '</div></div>';
+  html += '<div class="home-stat"><div class="home-stat-num">' + (stats.distance / 1000).toFixed(0) + 'k</div><div class="home-stat-label">' + tl('公里', 'Kilometers') + '</div></div>';
+  html += '<div class="home-stat"><div class="home-stat-num">' + years.size + '</div><div class="home-stat-label">' + tl('飞行年', 'Years') + '</div></div>';
   html += '</div>';
 
   // Recent trips
   html += '<div class="home-section">';
-  html += '  <div class="home-section-title">';
-  html += '    ' + tl('最近旅行', 'Recent Trips');
-  html += '    <a href="#timeline" class="home-section-link" onclick="App.navigate(\'timeline\');return false;">' + tl('查看全部 →', 'View all →') + '</a>';
-  html += '  </div>';
-  html += '  <div class="home-trips">';
+  html += '<div class="home-section-title">' + tl('最近旅行', 'Recent Trips');
+  html += '<a href="#timeline" class="home-section-link" onclick="App.navigate(\'timeline\');return false;">' + tl('查看全部 →', 'View all →') + '</a>';
+  html += '</div><div class="home-trips">';
 
   for (const t of recentTrips) {
     const title = tl(t.title, t.titleEn);
     const dests = tl(t.destinations, t.destinationsEn);
     const ds = Array.isArray(dests) ? dests.join(' · ') : dests;
-    html += '    <div class="home-trip-card" onclick="App.navigate(\'trip/' + t.slug + '\')">';
-    html += '      <div class="home-trip-card-img"><span class="emoji-bg">' + em(t.destinations[0] || '') + '</span></div>';
-    html += '      <div class="home-trip-card-body">';
-    html += '        <div class="home-trip-card-title">' + title + '</div>';
-    html += '        <div class="home-trip-card-meta">' + t.dateRange.start + ' – ' + t.dateRange.end + '</div>';
-    html += '        <div class="home-trip-card-dest">' + ds + '</div>';
-    html += '      </div>';
-    html += '    </div>';
+    html += '<div class="home-trip-card" onclick="App.navigate(\'trip/' + t.slug + '\')">';
+    html += '<div class="home-trip-card-img"><span class="emoji-bg">' + em(t.destinations[0] || '') + '</span></div>';
+    html += '<div class="home-trip-card-body">';
+    html += '<div class="home-trip-card-title">' + title + '</div>';
+    html += '<div class="home-trip-card-meta">' + t.dateRange.start + ' – ' + t.dateRange.end + '</div>';
+    html += '<div class="home-trip-card-dest">' + ds + '</div>';
+    html += '</div></div>';
   }
 
-  html += '  </div>';
-  html += '</div>';
+  html += '</div></div>';
 
   // Quick Links
   html += '<div class="home-section">';
-  html += '  <div class="home-section-title">' + tl('探索', 'Explore') + '</div>';
-  html += '  <div class="home-quick-links">';
-  html += '    <div class="home-quick-link" onclick="App.navigate(\'timeline\')">';
-  html += '      <div class="home-quick-link-icon">📅</div>';
-  html += '      <div class="home-quick-link-label">' + tl('时间线', 'Timeline') + '</div>';
-  html += '      <div class="home-quick-link-count">' + trips.length + ' ' + tl('趟旅行', 'trips') + '<span class="arrow">→</span></div>';
-  html += '    </div>';
-  html += '    <div class="home-quick-link" onclick="App.navigate(\'flights\')">';
-  html += '      <div class="home-quick-link-icon">✈️</div>';
-  html += '      <div class="home-quick-link-label">' + tl('飞行日志', 'Flights') + '</div>';
-  html += '      <div class="home-quick-link-count">' + flights.length + ' ' + tl('条记录', 'records') + '<span class="arrow">→</span></div>';
-  html += '    </div>';
-  html += '    <div class="home-quick-link" onclick="App.navigate(\'map\')">';
-  html += '      <div class="home-quick-link-icon">🌍</div>';
-  html += '      <div class="home-quick-link-label">' + tl('足迹地图', 'Map') + '</div>';
-  html += '      <div class="home-quick-link-count">' + countries.size + ' ' + tl('个国家', 'countries') + '<span class="arrow">→</span></div>';
-  html += '    </div>';
-  html += '  </div>';
+  html += '<div class="home-section-title">' + tl('探索', 'Explore') + '</div>';
+  html += '<div class="home-quick-links">';
+  html += '<div class="home-quick-link" onclick="App.navigate(\'timeline\')">';
+  html += '<div class="home-quick-link-icon">📅</div>';
+  html += '<div class="home-quick-link-label">' + tl('时间线', 'Timeline') + '</div>';
+  html += '<div class="home-quick-link-count">' + trips.length + ' ' + tl('趟旅行', 'trips') + '<span class="arrow">→</span></div>';
   html += '</div>';
+  html += '<div class="home-quick-link" onclick="App.navigate(\'flights\')">';
+  html += '<div class="home-quick-link-icon">✈️</div>';
+  html += '<div class="home-quick-link-label">' + tl('飞行日志', 'Flights') + '</div>';
+  html += '<div class="home-quick-link-count">' + flights.length + ' ' + tl('条记录', 'records') + '<span class="arrow">→</span></div>';
+  html += '</div>';
+  html += '<div class="home-quick-link" onclick="App.navigate(\'map\')">';
+  html += '<div class="home-quick-link-icon">🌍</div>';
+  html += '<div class="home-quick-link-label">' + tl('足迹地图', 'Map') + '</div>';
+  html += '<div class="home-quick-link-count">' + countries.size + ' ' + tl('个国家', 'countries') + '<span class="arrow">→</span></div>';
+  html += '</div></div></div>';
 
   html += '</div>'; // container
 
