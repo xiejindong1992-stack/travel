@@ -142,51 +142,99 @@ function renderTripDetail(slug) {
   html += `</div>`;
 
   // === FLIGHTS ===
-  // === Flights (helper) ===
-  function renderFlightsSection() {
-    if (flights.length === 0) return '';
-    let h = '<div class="trip-detail-section-title">' + tl('航班', 'Flights') + '</div>';
-    h += '<div class="trip-detail-flights"><div class="flights-grouped-table">';
-    for (const f of flights) {
-      const airline = tl(f.airline, f.airlineEn);
-      const depCity = tl(f.departureCity, f.departureCityEn);
-      const arrCity = tl(f.arrivalCity, f.arrivalCityEn);
-      const depCode = f.departure || depCity;
-      const arrCode = f.arrival || arrCity;
-      h += '<div class="flight-card">';
-      h += '<div class="flight-route"><span>' + depCode + '</span><span class="flight-arrow">→</span><span>' + arrCode + '</span></div>';
-      h += '<div class="flight-info">';
-      h += '<div class="flight-meta"><span>' + f.flightNo + '</span><span>' + airline + '</span>' + (f.aircraft ? '<span>' + f.aircraft + '</span>' : '') + '</div>';
-      h += '<div class="flight-date">' + f.date + (f.depTime ? ' · ' + f.depTime + ' – ' + f.arrTime : '') + '</div>';
-      h += '</div>';
-      h += '<div class="flight-details">';
-      h += (f.duration ? '<div>' + f.duration + '</div>' : '');
-      h += (f.seat ? '<div class="flight-aircraft">' + tl('座位', 'Seat') + ' ' + f.seat + '</div>' : '');
-      h += (f.distance ? '<div class="flight-aircraft">' + f.distance.toLocaleString() + ' km</div>' : '');
-      h += '</div></div>';
+  // === FLIGHTS SECTION (built as variable) ===
+  let flightsHTML = '';
+  if (flights.length > 0) {
+    flightsHTML += '<div class="trip-detail-section-title">' + tl('航班', 'Flights') + '</div>';
+    flightsHTML += '<div class="trip-detail-flights"><div class="flights-grouped-table">';
+    for (const ff of flights) {
+      const airline = tl(ff.airline, ff.airlineEn);
+      const depCity = tl(ff.departureCity, ff.departureCityEn);
+      const arrCity = tl(ff.arrivalCity, ff.arrivalCityEn);
+      const depCode = ff.departure || depCity;
+      const arrCode = ff.arrival || arrCity;
+      flightsHTML += '<div class="flight-card">';
+      flightsHTML += '<div class="flight-route"><span>' + depCode + '</span><span class="flight-arrow">→</span><span>' + arrCode + '</span></div>';
+      flightsHTML += '<div class="flight-info">';
+      flightsHTML += '<div class="flight-meta"><span>' + ff.flightNo + '</span><span>' + airline + '</span>' + (ff.aircraft ? '<span>' + ff.aircraft + '</span>' : '') + '</div>';
+      flightsHTML += '<div class="flight-date">' + ff.date + (ff.depTime ? ' · ' + ff.depTime + ' – ' + ff.arrTime : '') + '</div>';
+      flightsHTML += '</div>';
+      flightsHTML += '<div class="flight-details">';
+      flightsHTML += (ff.duration ? '<div>' + ff.duration + '</div>' : '');
+      flightsHTML += (ff.seat ? '<div class="flight-aircraft">' + tl('座位', 'Seat') + ' ' + ff.seat + '</div>' : '');
+      flightsHTML += (ff.distance ? '<div class="flight-aircraft">' + ff.distance.toLocaleString() + ' km</div>' : '');
+      flightsHTML += '</div></div>';
     }
-    h += '</div></div>';
-    return h;
+    flightsHTML += '</div></div>';
   }
 
-  // Flights: show right after stats for travel, at bottom for business
+  // Show flights position based on category
   if (isTravel) {
-    html += renderFlightsSection();
-  }
-  // Flights for business: show at bottom
-  if (!isTravel && flights.length > 0) {
-    html += renderFlightsSection();
+    html += flightsHTML;  // At top for travel
   }
 
-  // === Travel Notes (hidden for business trips) ===
-  if (!isBiz) {
-    html += '<div class="trip-detail-section-title">' + tl('攻略 / 心得', 'Notes & Tips') + '</div>';
-    html += '<div class="trip-notes">';
-    html += '  <div class="trip-notes-title">' + tl('旅行小贴士', 'Travel Tips') + '</div>';
-    html += '  <div class="trip-notes-content" style="color:var(--text-muted);font-style:italic;">';
-    html += '    ✏️ ' + tl('签证、交通、住宿、推荐餐厅、实用提醒…在这里记录你的攻略心得。', 'Visa, transport, accommodation, restaurants, tips… Write your notes here.');
-    html += '  </div>';
+  // === HIGHLIGHTS ===
+  if (highlights.length > 0) {
+    html += '<div class="trip-detail-highlights">';
+    for (const h of highlights) {
+      const cleanLabel = h.replace(/^到访/, '');
+      html += '<span class="trip-detail-highlight">' + cleanLabel + '</span>';
+    }
     html += '</div>';
   }
 
+  // === TRAVELOGUE ===
+  html += '<div class="trip-detail-section-title">' + tl('游记', 'Travelogue') + '</div>';
+  if (desc && !desc.startsWith('从广州出发')) {
+    html += '<div class="trip-detail-description">' + desc + '</div>';
+  } else {
+    const zhHint = '在这里写下你的旅行故事…比如：什么季节去的、和谁一起、最难忘的瞬间是什么。';
+    const enHint = 'Write your travel story here… When did you go, who was with you, what was the most memorable moment?';
+    html += '<div style="background:var(--accent-light);border-radius:6px;padding:24px;margin-bottom:32px;border:1px dashed var(--accent);">';
+    html += '<p style="color:var(--text-secondary);font-size:0.9rem;margin:0">✏️ ' + tl(zhHint, enHint) + '</p></div>';
+  }
+
+  // === PHOTOS ===
+  html += '<div class="trip-detail-section-title">' + tl('照片', 'Photos') + '</div>';
+  html += '<div class="trip-detail-gallery">';
+  const hasPhotos = trip.photos && trip.photos.length > 0;
+  if (hasPhotos) {
+    for (const photo of trip.photos.slice(0, 7)) {
+      html += '<div class="gallery-item" style="background-image:url(\'' + photo + '\');background-size:cover;background-position:center;"></div>';
+    }
+    const remaining = 7 - trip.photos.slice(0, 7).length;
+    for (let i = 0; i < remaining; i++) {
+      html += '<div class="gallery-item"><span class="item-icon">📷</span></div>';
+    }
+  } else {
+    const labels = tl(
+      ['封面照片', '风景', '美食', '人物', '街景', '细节', '其他'],
+      ['Cover', 'Landscape', 'Food', 'People', 'Street', 'Detail', 'More']
+    );
+    for (let i = 0; i < 7; i++) {
+      const isFirst = i === 0;
+      html += '<div class="gallery-item" style="' + (isFirst ? 'grid-column:span 2;grid-row:span 2' : '') + '">';
+      html += '<span class="item-icon" style="font-size:' + (isFirst ? '2rem' : '1.2rem') + ';opacity:0.3">📷</span>';
+      html += '<span style="position:absolute;bottom:10px;left:10px;font-size:0.68rem;color:var(--text-muted);background:rgba(250,250,250,0.8);padding:2px 8px;border-radius:3px;">+ ' + labels[i] + '</span>';
+      html += '</div>';
+    }
+  }
+  html += '</div>';
+
+  // Flights at bottom for business
+  if (!isTravel && flights.length > 0) {
+    html += flightsHTML;
+  }
+
+  // === TRAVEL NOTES (hidden for business trips) ===
+  if (!isBiz) {
+    html += '<div class="trip-detail-section-title">' + tl('攻略 / 心得', 'Notes & Tips') + '</div>';
+    html += '<div class="trip-notes">';
+    html += '<div class="trip-notes-title">' + tl('旅行小贴士', 'Travel Tips') + '</div>';
+    html += '<div class="trip-notes-content" style="color:var(--text-muted);font-style:italic;">';
+    html += '✏️ ' + tl('签证、交通、住宿、推荐餐厅、实用提醒…在这里记录你的攻略心得。', 'Visa, transport, accommodation, restaurants, tips… Write your notes here.');
+    html += '</div></div>';
+  }
+  html += '</div>';
+  page.innerHTML = html;
 }

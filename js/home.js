@@ -74,9 +74,9 @@ function renderHome() {
   html += '<div class="home-section">';
   // Category sections
   const travelTrips = [...trips].filter(t => t.category === 'travel')
-    .sort((a, b) => b.dateRange.start.localeCompare(a.dateRange.start)).slice(0, 4);
+    .sort((a, b) => b.dateRange.start.localeCompare(a.dateRange.start)).slice(0, 6);
   const bizTrips = [...trips].filter(t => t.category === 'business')
-    .sort((a, b) => b.dateRange.start.localeCompare(a.dateRange.start)).slice(0, 4);
+    .sort((a, b) => b.dateRange.start.localeCompare(a.dateRange.start)).slice(0, 6);
 
   function renderCatSection(cat, icon, label, items) {
     let h = '<div class="home-cat-section">';

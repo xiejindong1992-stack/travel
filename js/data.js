@@ -51,9 +51,11 @@ const DataStore = {
       if (!groups[year]) groups[year] = [];
       groups[year].push(trip);
     }
-    // Sort years descending
+    // Sort years descending, each year's trips by date descending
     const sorted = {};
-    Object.keys(groups).sort((a, b) => b - a).forEach(y => { sorted[y] = groups[y]; });
+    Object.keys(groups).sort((a, b) => b - a).forEach(y => {
+      sorted[y] = groups[y].sort((a, b) => b.dateRange.start.localeCompare(a.dateRange.start));
+    });
     return sorted;
   },
 

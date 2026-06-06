@@ -121,6 +121,7 @@ function renderTimeline() {
           <div class="timeline-card-body">
             <div class="timeline-card-date">${trip.dateRange.start} – ${trip.dateRange.end}${flightCount ? ` · ${flightCount} ${tl('段飞行', 'flights')}` : ''}</div>
             <div class="timeline-card-title">${title}</div>
+            ${trip.category ? '<div class="timeline-card-cat"><span class="trip-cat ' + trip.category + '">' + tl(trip.category === 'travel' ? '走走世界' : '出差一下', trip.category === 'travel' ? 'Travel' : 'Business') + '</span></div>' : ''}
             <div class="timeline-card-dest">${destStr}</div>
             ${hlArr.length > 0 ? `<div class="timeline-card-highlights">${hlArr.slice(0,3).map(h => `<span class="trip-entry-highlight">${h}</span>`).join('')}</div>` : ''}
           </div>
