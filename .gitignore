@@ -1,0 +1,7 @@
+.DS_Store
+*.log
+*.pyc
+__pycache__/
+node_modules/
+scripts/__pycache__/
+serve.sh
