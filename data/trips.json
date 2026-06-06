@@ -2612,17 +2612,19 @@
         "lat": 35.6762,
         "lng": 139.6503
       },
-      "cover": null,
+      "cover": "assets/images/2026-05-04-tokyo/cover.jpeg",
       "highlights": [
+        "到访香港",
         "到访东京",
-        "到访香港"
+        "富士山"
       ],
       "highlightsEn": [
-        "Visited Tokyo",
-        "Visited Hong Kong"
+        "Hong Kong",
+        "Tokyo",
+        "Mt. Fuji"
       ],
-      "description": "广州出发经香港去东京，看富士山。",
-      "descriptionEn": "From Guangzhou via Hong Kong to Tokyo, saw Mt. Fuji.",
+      "description": "从广州出发经香港去东京，在富士山看到了清晰的雪顶。从东京坐新干线到河口湖，再转巴士到五合目。",
+      "descriptionEn": "From Guangzhou via Hong Kong to Tokyo. Saw Mt. Fuji with clear snow cap. Took Shinkansen to Kawaguchiko, then bus to 5th Station.",
       "flights": [
         "CX505-0504",
         "CX520-0428",
@@ -2634,7 +2636,14 @@
         "auto"
       ],
       "distance": 6133,
-      "category": "travel"
+      "category": "travel",
+      "photos": [
+        "assets/images/2026-05-04-tokyo/cover.jpeg",
+        "assets/images/2026-05-04-tokyo/fuji.JPG",
+        "assets/images/2026-05-04-tokyo/photo-1.jpeg",
+        "assets/images/2026-05-04-tokyo/photo-2.jpeg",
+        "assets/images/2026-05-04-tokyo/photo-3.jpeg"
+      ]
     },
     {
       "id": "2025-08-01-河内",

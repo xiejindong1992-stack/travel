@@ -44,7 +44,7 @@ function renderHome() {
   };
   const em = (c) => EMOJI[c] || '✈️';
 
-  const HERO_IMAGE = 'assets/images/2026-05-04-tokyo/fuji.JPG';
+  const HERO_IMAGE = 'assets/images/home/cover.jpeg';
 
   let html = '';
 
