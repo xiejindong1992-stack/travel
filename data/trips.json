@@ -672,82 +672,6 @@
       "distance": 1773
     },
     {
-      "id": "2019-12-30-台北",
-      "slug": "2019-12-30-台北",
-      "title": "前往台北",
-      "titleEn": "Trip to Taipei",
-      "dateRange": {
-        "start": "2019-12-30",
-        "end": "2019-12-30"
-      },
-      "destinations": [
-        "台北"
-      ],
-      "destinationsEn": [
-        "Taipei"
-      ],
-      "country": "中国 · 中国台湾",
-      "countryEn": "China · Taiwan",
-      "coordinates": {
-        "lat": 25.033,
-        "lng": 121.5654
-      },
-      "cover": null,
-      "highlights": [
-        "到访台北"
-      ],
-      "highlightsEn": [
-        "Visited Taipei"
-      ],
-      "description": "从广州出发，广州 → 台北，共1段飞行。",
-      "descriptionEn": "From 广州, 广州 → 台北, 1 flights.",
-      "flights": [
-        "BR708-1230"
-      ],
-      "tags": [
-        "auto"
-      ],
-      "distance": 852
-    },
-    {
-      "id": "2020-01-06-台北",
-      "slug": "2020-01-06-台北",
-      "title": "从台北返回",
-      "titleEn": "Return from Taipei",
-      "dateRange": {
-        "start": "2020-01-06",
-        "end": "2020-01-06"
-      },
-      "destinations": [
-        "台北"
-      ],
-      "destinationsEn": [
-        "Taipei"
-      ],
-      "country": "中国 · 中国台湾",
-      "countryEn": "China · Taiwan",
-      "coordinates": {
-        "lat": 25.033,
-        "lng": 121.5654
-      },
-      "cover": null,
-      "highlights": [
-        "到访台北"
-      ],
-      "highlightsEn": [
-        "Visited Taipei"
-      ],
-      "description": "从广州出发，台北 → 广州，共1段飞行。",
-      "descriptionEn": "From 广州, 台北 → 广州, 1 flights.",
-      "flights": [
-        "BR707-0106"
-      ],
-      "tags": [
-        "auto"
-      ],
-      "distance": 852
-    },
-    {
       "id": "2020-06-19-三亚",
       "slug": "2020-06-19-三亚",
       "title": "前往三亚",
@@ -2976,6 +2900,91 @@
       "photos": [
         "assets/images/2026-05-04-tokyo/fuji.JPG"
       ]
+    },
+    {
+      "id": "2018-12-30-广州",
+      "slug": "2018-12-30-广州",
+      "title": "广州 · 台北",
+      "titleEn": "Guangzhou · Taipei",
+      "dateRange": {
+        "start": "2018-12-30",
+        "end": "2019-01-06"
+      },
+      "destinations": [
+        "广州",
+        "台北"
+      ],
+      "destinationsEn": [
+        "Guangzhou",
+        "Taipei"
+      ],
+      "country": "中国 · 中国台湾",
+      "countryEn": "China · Taiwan",
+      "coordinates": {
+        "lat": 25.033,
+        "lng": 121.5654
+      },
+      "cover": null,
+      "highlights": [
+        "到访台北"
+      ],
+      "highlightsEn": [
+        "Visited Taipei"
+      ],
+      "description": "在广州过完元旦去台北玩了几天。",
+      "descriptionEn": "Visited Taipei after New Year in Guangzhou.",
+      "flights": [
+        "BR708-1230",
+        "BR707-0106"
+      ],
+      "tags": [
+        "auto"
+      ],
+      "distance": 1704
+    },
+    {
+      "id": "2018-04-26-澳门",
+      "slug": "2018-04-26-澳门",
+      "title": "澳门 · 台北",
+      "titleEn": "Macau · Taipei",
+      "dateRange": {
+        "start": "2018-04-26",
+        "end": "2018-05-01"
+      },
+      "destinations": [
+        "澳门",
+        "台北"
+      ],
+      "destinationsEn": [
+        "Macau",
+        "Taipei"
+      ],
+      "country": "中国澳门 · 中国台湾",
+      "countryEn": "Macau · Taiwan",
+      "coordinates": {
+        "lat": 25.033,
+        "lng": 121.5654
+      },
+      "cover": null,
+      "highlights": [
+        "到访澳门",
+        "到访台北"
+      ],
+      "highlightsEn": [
+        "Visited Macau",
+        "Visited Taipei"
+      ],
+      "description": "从澳门飞去台北玩了几天。",
+      "descriptionEn": "Flew from Macau to Taipei for a few days.",
+      "flights": [
+        "NX602-0426",
+        "NX619-0501"
+      ],
+      "tags": [
+        "auto",
+        "international"
+      ],
+      "distance": 1686
     }
   ]
 }
