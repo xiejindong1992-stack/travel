@@ -87,7 +87,11 @@ function renderHome() {
       const dests = tl(t.destinations, t.destinationsEn);
       const ds = Array.isArray(dests) ? dests.join(' \u00b7 ') : dests;
       h += '<div class="home-trip-card" onclick="App.navigate(&#x27;trip/' + t.slug + '&#x27;)">';
-      h += '<div class="home-trip-card-img"><span class="emoji-bg">' + em(t.destinations[0] || '') + '</span></div>';
+      if (t.cover) {
+        h += '<div class="home-trip-card-img" style="background-image:url(' + t.cover + ');background-size:cover;background-position:center;"></div>';
+      } else {
+        h += '<div class="home-trip-card-img"><span class="emoji-bg">' + em(t.destinations[0] || '') + '</span></div>';
+      }
       h += '<div class="home-trip-card-body">';
       h += '<div class="home-trip-card-title">' + title + '</div>';
       h += '<div class="home-trip-card-meta">' + t.dateRange.start + ' \u2013 ' + t.dateRange.end + '</div>';

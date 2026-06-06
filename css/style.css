@@ -839,6 +839,8 @@ small { font-size: 0.875rem; color: var(--text-secondary); }
 .home-trip-card-img {
   height: 140px;
   background: var(--bg-alt);
+  background-size: cover;
+  background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -965,6 +967,8 @@ small { font-size: 0.875rem; color: var(--text-secondary); }
   width: 100%;
   height: 100px;
   background: var(--bg-alt);
+  background-size: cover;
+  background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;
