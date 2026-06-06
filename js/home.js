@@ -72,24 +72,34 @@ function renderHome() {
 
   // Recent trips
   html += '<div class="home-section">';
-  html += '<div class="home-section-title">' + tl('最近旅行', 'Recent Trips');
-  html += '<a href="#timeline" class="home-section-link" onclick="App.navigate(\'timeline\');return false;">' + tl('查看全部 →', 'View all →') + '</a>';
-  html += '</div><div class="home-trips">';
+  // Category sections
+  const travelTrips = [...trips].filter(t => t.category === 'travel')
+    .sort((a, b) => b.dateRange.start.localeCompare(a.dateRange.start)).slice(0, 4);
+  const bizTrips = [...trips].filter(t => t.category === 'business')
+    .sort((a, b) => b.dateRange.start.localeCompare(a.dateRange.start)).slice(0, 4);
 
-  for (const t of recentTrips) {
-    const title = tl(t.title, t.titleEn);
-    const dests = tl(t.destinations, t.destinationsEn);
-    const ds = Array.isArray(dests) ? dests.join(' · ') : dests;
-    html += '<div class="home-trip-card" onclick="App.navigate(\'trip/' + t.slug + '\')">';
-    html += '<div class="home-trip-card-img"><span class="emoji-bg">' + em(t.destinations[0] || '') + '</span></div>';
-    html += '<div class="home-trip-card-body">';
-    html += '<div class="home-trip-card-title">' + title + '</div>';
-    html += '<div class="home-trip-card-meta">' + t.dateRange.start + ' – ' + t.dateRange.end + '</div>';
-    html += '<div class="home-trip-card-dest">' + ds + '</div>';
-    html += '</div></div>';
+  function renderCatSection(cat, icon, label, items) {
+    let h = '<div class="home-cat-section">';
+    h += '<div class="home-cat-header"><span class="home-cat-icon">' + icon + '</span><span class="home-cat-title">' + label + '</span><span class="home-cat-count">' + items.length + ' ' + tl('趟', 'trips') + '</span></div>';
+    h += '<div class="home-trips">';
+    for (const t of items) {
+      const title = tl(t.title, t.titleEn);
+      const dests = tl(t.destinations, t.destinationsEn);
+      const ds = Array.isArray(dests) ? dests.join(' \u00b7 ') : dests;
+      h += '<div class="home-trip-card" onclick="App.navigate(&#x27;trip/' + t.slug + '&#x27;)">';
+      h += '<div class="home-trip-card-img"><span class="emoji-bg">' + em(t.destinations[0] || '') + '</span></div>';
+      h += '<div class="home-trip-card-body">';
+      h += '<div class="home-trip-card-title">' + title + '</div>';
+      h += '<div class="home-trip-card-meta">' + t.dateRange.start + ' \u2013 ' + t.dateRange.end + '</div>';
+      h += '<div class="home-trip-card-dest">' + ds + '</div>';
+      h += '</div></div>';
+    }
+    h += '</div></div>';
+    return h;
   }
 
-  html += '</div></div>';
+  html += renderCatSection('travel', '\u2708\ufe0f', tl('\u8d70\u8d70\u4e16\u754c', 'Travel'), travelTrips);
+  html += renderCatSection('business', '\ud83d\udcbc', tl('\u51fa\u5dee\u4e00\u4e0b', 'Business'), bizTrips);
 
   // Quick Links
   html += '<div class="home-section">';

@@ -83,6 +83,9 @@ function renderTripDetail(slug) {
     <div><span style="font-size:1.25rem;font-weight:300">${trip.destinations.length}</span><br><span style="font-size:0.72rem;color:var(--text-secondary)">${tl('到访城市', 'Cities')}</span></div>
   </div>`;
 
+  const isTravel = trip.category === 'travel';
+  const isBiz = trip.category === 'business';
+
   // === HIGHLIGHTS ===
   if (highlights.length > 0) {
     html += `<div class="trip-detail-highlights">`;
@@ -139,43 +142,51 @@ function renderTripDetail(slug) {
   html += `</div>`;
 
   // === FLIGHTS ===
-  if (flights.length > 0) {
-    html += `<div class="trip-detail-section-title">${tl('航班', 'Flights')}</div>`;
-    html += `<div class="trip-detail-flights"><div class="flights-grouped-table">`;
+  // === Flights (helper) ===
+  function renderFlightsSection() {
+    if (flights.length === 0) return '';
+    let h = '<div class="trip-detail-section-title">' + tl('航班', 'Flights') + '</div>';
+    h += '<div class="trip-detail-flights"><div class="flights-grouped-table">';
     for (const f of flights) {
       const airline = tl(f.airline, f.airlineEn);
       const depCity = tl(f.departureCity, f.departureCityEn);
       const arrCity = tl(f.arrivalCity, f.arrivalCityEn);
       const depCode = f.departure || depCity;
       const arrCode = f.arrival || arrCity;
-      html += `<div class="flight-card">
-        <div class="flight-route"><span>${depCode}</span><span class="flight-arrow">→</span><span>${arrCode}</span></div>
-        <div class="flight-info">
-          <div class="flight-meta"><span>${f.flightNo}</span><span>${airline}</span>${f.aircraft ? `<span>${f.aircraft}</span>` : ''}</div>
-          <div class="flight-date">${f.date}${f.depTime ? ' · ' + f.depTime + ' – ' + f.arrTime : ''}</div>
-        </div>
-        <div class="flight-details">
-          ${f.duration ? `<div>${f.duration}</div>` : ''}
-          ${f.seat ? `<div class="flight-aircraft">${tl('座位', 'Seat')} ${f.seat}</div>` : ''}
-          ${f.distance ? `<div class="flight-aircraft">${f.distance.toLocaleString()} km</div>` : ''}
-        </div>
-      </div>`;
+      h += '<div class="flight-card">';
+      h += '<div class="flight-route"><span>' + depCode + '</span><span class="flight-arrow">→</span><span>' + arrCode + '</span></div>';
+      h += '<div class="flight-info">';
+      h += '<div class="flight-meta"><span>' + f.flightNo + '</span><span>' + airline + '</span>' + (f.aircraft ? '<span>' + f.aircraft + '</span>' : '') + '</div>';
+      h += '<div class="flight-date">' + f.date + (f.depTime ? ' · ' + f.depTime + ' – ' + f.arrTime : '') + '</div>';
+      h += '</div>';
+      h += '<div class="flight-details">';
+      h += (f.duration ? '<div>' + f.duration + '</div>' : '');
+      h += (f.seat ? '<div class="flight-aircraft">' + tl('座位', 'Seat') + ' ' + f.seat + '</div>' : '');
+      h += (f.distance ? '<div class="flight-aircraft">' + f.distance.toLocaleString() + ' km</div>' : '');
+      h += '</div></div>';
     }
-    html += `</div></div>`;
+    h += '</div></div>';
+    return h;
   }
 
-  // === TRAVEL NOTES ===
-  html += `<div class="trip-detail-section-title">${tl('攻略 / 心得', 'Notes & Tips')}</div>`;
-  html += `<div class="trip-notes">
-    <div class="trip-notes-title">${tl('旅行小贴士', 'Travel Tips')}</div>
-    <div class="trip-notes-content" style="color:var(--text-muted);font-style:italic;">
-      ✏️ ${tl(
-        '签证、交通、住宿、推荐餐厅、实用提醒…在这里记录你的攻略心得。',
-        'Visa, transport, accommodation, restaurants, tips… Write your notes here.'
-      )}
-    </div>
-  </div>`;
+  // Flights: show right after stats for travel, at bottom for business
+  if (isTravel) {
+    html += renderFlightsSection();
+  }
+  // Flights for business: show at bottom
+  if (!isTravel && flights.length > 0) {
+    html += renderFlightsSection();
+  }
 
-  html += '</div>';
-  page.innerHTML = html;
+  // === Travel Notes (hidden for business trips) ===
+  if (!isBiz) {
+    html += '<div class="trip-detail-section-title">' + tl('攻略 / 心得', 'Notes & Tips') + '</div>';
+    html += '<div class="trip-notes">';
+    html += '  <div class="trip-notes-title">' + tl('旅行小贴士', 'Travel Tips') + '</div>';
+    html += '  <div class="trip-notes-content" style="color:var(--text-muted);font-style:italic;">';
+    html += '    ✏️ ' + tl('签证、交通、住宿、推荐餐厅、实用提醒…在这里记录你的攻略心得。', 'Visa, transport, accommodation, restaurants, tips… Write your notes here.');
+    html += '  </div>';
+    html += '</div>';
+  }
+
 }
